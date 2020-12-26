@@ -64,6 +64,8 @@
 			// game over
 			if(bird.x <= bomb[i].x + 64 && bird.x + 128 >= bomb[i].x && 
 				442 <= bomb[i].y + 64 && 442 + 128 >= bomb[i].y) {
+				ctx.fillStyle = "white";
+				ctx.fillRect(0, 0, 1000, 1000);
 				location.reload();
 			}
 			if(bomb[i].y > 900) {
@@ -87,6 +89,11 @@
 		else if(e.keyCode == 68) dir = "right";
 		else if(e.keyCode == 37) dir = "left";
 		else if(e.keyCode == 39) dir = "right";
+	});
+
+	cvs.addEventListener("mousedown", function(e) {
+		if(e.clientX <= 200) dir = "left";
+		else if(e.clientX >= 600 && e.clientX <= 800) dir = "right";
 	});
 
 	function draw() {
