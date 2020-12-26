@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+	<style>
+		.reverse {
+			transform: scale(-1, 1);
+		}
+	</style>
+	<title>Bird</title>
+</head>
+<body style="margin: 0;">
+	<canvas id="cvs" style="display: block;"></canvas>
+	<script>
+	let
+		cvs = document.getElementById("cvs"),
+		ctx = cvs.getContext("2d"),
+		score = 0,
+		s = 1,
+		grav = 5,
+		dir,
+		birdImg = new Image(),
+		bombImg = new Image(),
+		boom = new Image(),
+		background = new Image();
+
+	birdImg.src = "img/bird.png";
+	bombImg.src = "img/bomb.png";
+	boom.src = "img/boom.png";
+	background.src = "img/background.jpg";
+
+	birdImg.class = "NaN";
+
+	cvs.width = 1050;
+	cvs.height = 600;
+
+	function randomInt(min, max) {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min)) + min; //Максимум не включается, минимум включается
+	}
+
+	let b = randomInt(10, 31);
+
+	// bomb
+	let bomb = [];
+	bomb[0] = {
+		x: randomInt(0, 744),
+		y: randomInt(0, -744),
+		speed: grav + randomInt(0, 6)
+	};
+	bomb[1] = {
+		x: randomInt(0, 744),
+		y: randomInt(0, -744),
+		speed: grav + randomInt(0, 6)
+	};
+
+	function spawnBomb() {
+		for(let i = 0; i < bomb.length; i++) {
+			ctx.drawImage(bombImg, bomb[i].x, bomb[i].y);
+			bomb[i].y += bomb[i].speed;
+			// game over
+			if(bird.x <= bomb[i].x + 64 && bird.x + 128 >= bomb[i].x && 
+				442 <= bomb[i].y + 64 && 442 + 128 >= bomb[i].y) {
+				location.reload();
+			}
+			if(bomb[i].y > 900) {
+				score++;
+				bomb[i] = {
+					x: randomInt(0, 744),
+					y: randomInt(0, -744),
+					speed: grav + randomInt(0, 6)
+				};
+			}
+		}
+	}
+
+	// bird
+	let bird = {
+		x: 400,
+	};
+
+	document.addEventListener("keydown", function(e) {
+		if(e.keyCode == 65) dir = "left";
+		else if(e.keyCode == 68) dir = "right";
+		else if(e.keyCode == 37) dir = "left";
+		else if(e.keyCode == 39) dir = "right";
+	});
+
+	function draw() {
+		ctx.drawImage(background, 0, 0);
+		ctx.drawImage(birdImg, bird.x, 442);
+
+		ctx.fillStyle = "white";
+		ctx.fillRect(800, 0, 500, 500);
+		ctx.fillStyle = "black";
+		ctx.font = "35px Arial";
+		ctx.fillText(`Your score: ${score}`, 805, 50);
+
+		spawnBomb();
+
+		if(dir == "left") {
+			birdImg.class = "NaN";
+			bird.x -= 10; 
+		}
+		else if(dir == "right") {
+			birdImg.class = "reverse";
+			bird.x += 10;
+		}
+
+		// edge
+		if(bird.x < 0) {
+			bird.x += 10; 
+		}
+		else if(bird.x > 672) {
+			bird.x -= 10;
+		}
+
+		let newBomb = {
+			x: randomInt(0, 744),
+			y: randomInt(0, -801),
+			speed: grav + randomInt(0, 6)
+		};
+
+		if(score >= b) {
+			bomb.push(newBomb);
+			b += randomInt(0, 21);
+			b * 2;
+		}
+
+		requestAnimationFrame(draw);
+	}
+
+	background.onload = draw;
+	</script>
+</body>
+</html>
